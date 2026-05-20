@@ -3,152 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đọc Truyện - Lớp Cô Đường</title>
+    <title>Đọc Truyện Lớp 7A1</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
                         url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1920') no-repeat center center fixed;
-            background-size: cover;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-size: cover; color: #333; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
         }
-
         header {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            width: 100%; background: rgba(255, 255, 255, 0.95); padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
         }
-
-        header h1 {
-            color: #2c3e50;
-            font-size: 24px;
-            font-weight: 800;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 15px;
-        }
-
-        .lvl-badge {
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            color: #000;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .title-badge {
-            background: #34495e;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn {
-            background: #2980b9;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn:hover {
-            background: #1f3a60;
-            transform: translateY(-2px);
-        }
-
+        header h1 { color: #2c3e50; font-size: 24px; font-weight: 800; }
+        .user-info { display: flex; align-items: center; gap: 15px; font-size: 15px; flex-wrap: wrap; }
+        .lvl-badge { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #000; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 13px; }
+        .title-badge { background: #34495e; color: white; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .btn { background: #2980b9; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn:hover { background: #1f3a60; transform: translateY(-2px); }
         .btn-danger { background: #e74c3c; }
         .btn-danger:hover { background: #c0392b; }
         .btn-success { background: #2ecc71; }
         .btn-success:hover { background: #27ae60; }
         .btn-purple { background: #9b59b6; }
         .btn-purple:hover { background: #8e44ad; }
-
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 30px 0;
-            background: rgba(255, 255, 255, 0.98);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
+        .container { width: 95%; max-width: 1200px; margin: 30px 0; background: rgba(255, 255, 255, 0.98); padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
         .screen { display: none; }
         .screen.active { display: block; }
-
-        .auth-form {
-            max-width: 420px;
-            margin: 40px auto;
-            padding: 30px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
+        .auth-form { max-width: 420px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
         .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; }
-
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .tab-btn { background: #eee; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #555; }
         .tab-btn.active { background: #2c3e50; color: white; }
-
-        /* Bộ lọc truyện */
         .filter-buttons { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
         .filter-btn { background: #e2e8f0; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; color: #4a5568; }
         .filter-btn.active { background: #2980b9; color: white; }
-
-        /* Danh sách truyện */
-        .story-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .story-card {
-            background: #fdfefe;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            transition: 0.3s;
-        }
-
+        .story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .story-card { background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s; }
         .story-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .story-card h3 { color: #2c3e50; margin: 10px 0; font-size: 17px; min-height: 42px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
         .badges-wrapper { display: flex; gap: 5px; margin-bottom: 5px; }
         .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; color: white; font-weight: bold;}
         .tag-vanhoc { background: #e67e22; }
@@ -156,70 +55,12 @@
         .tag-doisong { background: #2980b9; }
         .tag-cotich { background: #9b59b6; }
         .tag-length { background: #7f8c8d; }
-
-        /* Đọc truyện */
-        .story-content {
-            font-size: 18px;
-            line-height: 1.9;
-            margin: 25px 0;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 15px;
-            text-align: justify;
-            border-bottom: 2px solid #eee;
-        }
-
-        /* Phần Trắc Nghiệm Đố Vui */
-        .quiz-section {
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-        }
-
-        .quiz-option {
-            background: white;
-            border: 1px solid #cbd5e1;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
+        .story-content { font-size: 18px; line-height: 1.9; margin: 25px 0; max-height: 500px; overflow-y: auto; padding-right: 15px; text-align: justify; border-bottom: 2px solid #eee; }
+        .quiz-section { background: #f8fafc; border: 2px solid #cbd5e1; padding: 20px; border-radius: 12px; margin-top: 25px; }
+        .quiz-option { background: white; border: 1px solid #cbd5e1; padding: 12px 20px; border-radius: 8px; margin: 10px 0; cursor: pointer; transition: 0.2s; }
         .quiz-option:hover { background: #e2e8f0; }
-
-        /* Trò chơi Vòng Quay */
-        .wheel-container {
-            text-align: center;
-            padding: 30px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            max-width: 500px;
-            margin: 20px auto;
-        }
-
-        .wheel-graphic {
-            width: 250px;
-            height: 250px;
-            border: 10px solid #2c3e50;
-            border-radius: 50%;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            background: conic-gradient(#e74c3c 0% 25%, #f1c40f 25% 50%, #2ecc71 50% 75%, #3498db 75% 100%);
-            transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-            color: white;
-            text-shadow: 1px 1px 3px black;
-        }
-
-        /* Bảng xếp hạng */
+        .wheel-container { text-align: center; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 500px; margin: 20px auto; }
+        .wheel-graphic { width: 250px; height: 250px; border: 10px solid #2c3e50; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; background: conic-gradient(#e74c3c 0% 25%, #f1c40f 25% 50%, #2ecc71 50% 75%, #3498db 75% 100%); transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 0 20px rgba(0,0,0,0.3); color: white; text-shadow: 1px 1px 3px black; }
         .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .leaderboard-table th, .leaderboard-table td { padding: 14px; text-align: left; border-bottom: 1px solid #ddd; }
         .leaderboard-table th { background: #2c3e50; color: white; }
@@ -231,12 +72,11 @@
 <body>
 
     <header>
-        <h1><table>📖 Đọc Truyện - Lớp Cô Đường</table></h1>
+        <h1>📖 Đọc Truyện Lớp 7A1</h1>
         <div class="user-info" id="header-user-info"></div>
     </header>
 
     <div class="container">
-        
         <div id="screen-login" class="screen active">
             <div class="auth-form">
                 <h2>Đăng Nhập Học Sinh</h2>
@@ -262,7 +102,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tên đăng nhập tự chọn (viết liền):</label>
-                    <input type="text" id="reg-username" placeholder="Ví dụ: vanhai9a">
+                    <input type="text" id="reg-username" placeholder="Ví dụ: vanhai">
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu:</label>
@@ -277,13 +117,13 @@
             <div class="tabs">
                 <button class="tab-btn active" id="btn-tab-stories" onclick="showTab('stories')">📚 Kho Kiến Thức & Tác Phẩm</button>
                 <button class="tab-btn" id="btn-tab-game" onclick="showTab('game')">🎡 Vòng Quay May Mắn</button>
-                <button class="tab-btn" id="btn-tab-leaderboard" onclick="showTab('leaderboard')">🏆 Bảng Vàng Lớp 9</button>
+                <button class="tab-btn" id="btn-tab-leaderboard" onclick="showTab('leaderboard')">🏆 Bảng Vàng Lớp Chi Tiết</button>
             </div>
 
             <div id="tab-stories" class="tab-content">
                 <div class="filter-buttons">
                     <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">Tất Cả</button>
-                    <button class="filter-btn" id="filter-vanhoc" onclick="setFilter('vanhoc')">📕 Ngữ Văn Lớp 9</button>
+                    <button class="filter-btn" id="filter-vanhoc" onclick="setFilter('vanhoc')">📕 Ngữ Văn</button>
                     <button class="filter-btn" id="filter-lichsu" onclick="setFilter('lichsu')">⚔️ Lịch Sử Việt Nam</button>
                     <button class="filter-btn" id="filter-doisong" onclick="setFilter('doisong')">🌱 Quà Tặng Cuộc Sống</button>
                     <button class="filter-btn" id="filter-cotich" onclick="setFilter('cotich')">✨ Cổ Tích Chọn Lọc</button>
@@ -296,21 +136,21 @@
             <div id="tab-game" class="tab-content" style="display:none;">
                 <div class="wheel-container">
                     <h2>🎡 VÒNG QUAY TRÍ TUỆ</h2>
-                    <p style="margin-top:5px; color:#555;">Mỗi lượt quay tốn <strong>15 Điểm</strong>. Có cơ hội trúng giải thưởng siêu lớn!</p>
+                    <p style="margin-top:5px; color:#555;">Mỗi lượt quay tốn <strong>15 Điểm</strong>.</p>
                     <div class="wheel-graphic" id="wheel">🎁 QUÀ</div>
                     <button class="btn btn-purple" style="font-size:16px; padding:12px 30px;" onclick="spinWheel()">Bắt Đầu Quay (-15đ)</button>
                 </div>
             </div>
 
             <div id="tab-leaderboard" class="tab-content" style="display:none;">
-                <h2>🏆 BẢNG VÀNG THI ĐUA NĂM HỌC - LỚP 9</h2>
+                <h2>🏆 BẢNG VÀNG THI ĐUÂNĂM HỌC TRỰC TUYẾN</h2>
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
                             <th>Hạng</th>
                             <th>Học Sinh</th>
                             <th>Cấp Độ</th>
-                            <th>Danh Hiệu Đạt Được</th>
+                            <th>Danh Hiệu</th>
                             <th>Số Bài Đã Đọc</th>
                             <th>Tổng Điểm</th>
                         </tr>
@@ -324,91 +164,61 @@
             <button class="btn" onclick="backToMain()">⬅ Trở về kho truyện</button>
             <h2 id="read-title" style="margin-top:20px; color:#2c3e50;"></h2>
             <div class="story-content" id="read-content"></div>
-            
-            <div class="quiz-section" id="quiz-area">
-                <h3 style="color:#c0392b; margin-bottom:10px;">🧠 TRÒ CHƠI ĐỐ VUI ĐỌC HIỂU KIẾN THỨC</h3>
-                <div id="quiz-question-box">
-                    <p id="quiz-question-text" style="font-weight:bold; font-size:16px;"></p>
-                    <div id="quiz-options-container"></div>
-                </div>
-            </div>
+            <div class="quiz-section" id="quiz-area"></div>
         </div>
-
     </div>
 
     <script>
-        // --- 1. KHO TRUYỆN ĐỒ SỘ ĐƯỢC CHUẨN HÓA VÀ RÀ SOÁT LỖI LOGIC ---
+        // --- LIÊN KẾT DATABASE FIREBASE CỦA EM ---
+        try {
+            firebase.initializeApp({ databaseURL: "https://thu-vien-86357-default-rtdb.firebaseio.com/" });
+        } catch(e) { console.log("Firebase init error"); }
+
+        // --- KHO TRUYỆN SẠCH CHỮ LỚP 9 ---
         const STORIES = [
-            // BỘ 1: VĂN HỌC THI VÀO 10 CHUYÊN SÂU
-            { id: 1, tag: "vanhoc", len: "long", tagName: "Ngữ Văn Lớp 9", lenName: "Truyện Dài", title: "Lặng Lẽ Sa Pa (Nguyễn Thành Long)", summary: "Bức tranh về những con người lao động thầm lặng, cống hiến hết mình cho tổ quốc giữa Sa Pa mù sương.", content: "Truyện ngắn 'Lặng lẽ Sa Pa' xoay quanh nhân vật anh thanh niên 27 tuổi làm công tác khí tượng kiêm vật lý địa cầu trên đỉnh Yên Sơn cao 2600 mét. Công việc hàng ngày của anh là đo gió, đo mưa, đo tính mây, đo chấn động đất rồi báo về trung tâm để phục vụ sản xuất và chiến đấu. Giữa cái lặng lẽ, heo hút của núi rừng Tây Bắc, anh vượt lên hoàn cảnh bằng lòng yêu nghề, lối sống khoa học, tinh thần ham đọc sách và sự cởi mở, chân thành. Cuộc gặp gỡ chớp nhoáng giữa anh với ông họa sĩ già và cô kỹ sư trẻ đã giúp họ cảm nhận sâu sắc hơn về vẻ đẹp của những con người cống hiến thầm lặng không tên tuổi cho đất nước.", quiz: { question: "Nhân vật anh thanh niên trong truyện sống và làm việc trên đỉnh núi nào?", options: ["Đỉnh Fansipan", "Đỉnh Yên Sơn", "Đỉnh Tây Côn Lĩnh"], correct: 1 } },
-            { id: 2, tag: "vanhoc", len: "long", tagName: "Ngữ Văn Lớp 9", lenName: "Truyện Dài", title: "Chiếc Lược Ngà (Nguyễn Quang Sáng)", summary: "Câu chuyện cảm động rơi nước mắt về tình cha con thiêng liêng trong bom đạn kháng chiến chống Mỹ.", content: "Ông Sáu đi kháng chiến khi con gái là bé Thu chưa đầy một tuổi. Sau 8 năm xa cách, ông được về thăm nhà vài ngày nhưng trớ trêu thay, bé Thu không chịu nhận cha vì vết sẹo trên mặt khiến ông không giống người trong bức ảnh chụp chung với mẹ. Đến lúc em hiểu ra và cất tiếng gọi 'Ba' xé lòng thì cũng là lúc ông Sáu phải lên đường trở lại chiến trường. Tại căn cứ, ông dồn hết tình thương yêu vào việc làm một chiếc lược bằng ngà voi để tặng con. Trong một trận càn quét dữ dội của địch, ông Sáu đã hy sinh anh dũng trước khi kịp trao tận tay món quà cho con gái, nhưng tình cha con của ông thì mãi mãi bất diệt.", quiz: { question: "Tại sao ban đầu bé Thu nhất quyết không chịu nhận ông Sáu là cha?", options: ["Vì ông Sáu đi lâu quá em không nhớ mặt", "Vì vết sẹo trên mặt khiến ông khác với bức ảnh", "Vì em nghe lời kẻ xấu xúi giục"], correct: 1 } },
-            { id: 3, tag: "vanhoc", len: "short", tagName: "Ngữ Văn Lớp 9", lenName: "Truyện Ngắn", title: "Làng (Kim Lân)", summary: "Tình yêu làng chợ dầu hòa quyện sâu sắc vào lòng yêu nước thiêng liêng của người nông dân tản cư.", content: "Nhân vật chính của tác phẩm là ông Hai - một người nông dân mang tình yêu làng Chợ Dầu sâu đậm. Phải đi tản cư vì chiến tranh, ông luôn dõi theo tin tức kháng chiến và tự hào về làng mình. Khi nghe tin sét đánh rằng làng Chợ Dầu theo giặc làm việt gian, ông Hai rơi vào tâm trạng đau đớn, tủi nhục, tuyệt vọng và bế tắc tuyệt đối. Thế nhưng, khi đặt lên bàn cân, ông khẳng định: 'Làng thì yêu thật, nhưng làng theo Tây thì phải thù'. Nỗi đau đó chỉ được giải tỏa hoàn toàn khi chủ tịch xã cải chính tin đồn. Dù nhà bị Tây đốt nhẵn, ông Hai vẫn sung sướng đi khoe khắp nơi vì đó là minh chứng làng ông không hề phản bội cách mạng.", quiz: { question: "Câu nói nổi tiếng nào thể hiện rõ nét nhận thức kháng chiến của ông Hai?", options: ["Làng thì yêu thật, nhưng làng theo Tây thì phải thù", "Dù có chết tôi cũng không bao giờ rời bỏ làng Chợ Dầu", "Tây đốt nhà tôi chứng tỏ làng tôi là làng cách mạng"], correct: 0 } },
-            
-            // BỘ 2: LỊCH SỬ HÀO HÙNG CỦA DÂN TỘC
-            { id: 4, tag: "lichsu", len: "long", tagName: "Lịch Sử", lenName: "Truyện Dài", title: "Đại Thắng Mùa Xuân 1789: Thần Tốc Tây Sơn Đại Phá Quân Thanh", summary: "Bản hùng ca về thiên tài quân sự của người anh hùng áo vải Nguyễn Huệ (Quang Trung).", content: "Cuối năm 1788, 29 vạn quân Thanh do Tôn Sĩ Nghị chỉ huy ồ ạt tiến vào xâm lược nước ta. Trước tình thế nguy cấp, ngày 22/12/1788, Nguyễn Huệ lên ngôi hoàng đế, lấy niên hiệu Quang Trung rồi lập tức tiến quân ra Bắc. Với chiến lược 'thần tốc, táo bạo, bất ngờ', vua Quang Trung tổ chức hành quân thần kỳ ngày đêm. Đêm 30 Tết, quân Tây Sơn ăn Tết trước rồi hành quân thần tốc tiến đánh các tiền đồn giặc. Mờ sáng mùng 5 Tết, trận quyết chiến chiến lược tại đồn Ngọc Hồi và Đống Đa nổ ra dữ dội. Quân giặc đại bại, thây chất thành gò, Tôn Sĩ Nghị hoảng sợ bỏ chạy. Trưa mùng 5 Tết, vua Quang Trung ngự trên lưng voi, áo bào sạm đen khói súng, dẫn đầu quân sĩ oai phong tiến vào kinh thành Thăng Long giải phóng đất nước.", quiz: { question: "Vua Quang Trung tiến quân vào giải phóng Thăng Long vào thời gian nào?", options: ["Mùng 3 Tết Kỷ Dậu", "Mùng 5 Tết Kỷ Dậu", "Mùng 7 Tết Kỷ Dậu"], correct: 1 } },
-            { id: 5, tag: "lichsu", len: "short", tagName: "Lịch Sử", lenName: "Truyện Ngắn", title: "Trần Quốc Toản: Lá Cờ Thêu Sáu Chữ Vàng", summary: "Tinh thần yêu nước, chí khí quật cường của người anh hùng trẻ tuổi lịch sử nhà Trần.", content: "Khi quân Nguyên Mông lăm le xâm lược bờ cõi nước Nam, vua Trần mở hội nghị Bình Than cùng các vương hầu bàn kế sách đánh giặc. Vì còn quá nhỏ tuổi, Hoài Văn Hầu Trần Quốc Toản không được dự bàn. Căm tức quân giặc tàn bạo, lại uất ức vì bị coi thường, Trần Quốc Toản vô tình bóp nát quả cam trong tay lúc nào không biết. Không cam chịu đứng nhìn, chàng quay về lập đội quân gồm hơn một nghìn tráng sĩ, rèn vũ khí, may lá cờ lớn thêu sáu chữ vàng: 'Phá cường địch, báo hoàng ân' (Phá giặc mạnh, báo ơn vua). Đội quân trẻ tuổi đã chiến đấu vô cùng anh dũng, lập nhiều chiến công hiển hách làm quân giặc khiếp sợ.", quiz: { question: "Sáu chữ vàng thêu trên lá cờ ra trận của Trần Quốc Toản là gì?", options: ["Sát Thát, Phá Địch, Bảo Quốc", "Phá cường địch, báo hoàng ân", "Quốc gia hưng vong, thất phu hữu trách"], correct: 1 } },
-            
-            // BỘ 3: QUÀ TẶNG CUỘC SỐNG VÀ PHÁT TRIỂN TƯ DUY
-            { id: 6, tag: "doisong", len: "short", tagName: "Đời Sống", lenName: "Truyện Ngắn", title: "Lời Nói Dối Của Người Mẹ", summary: "Câu chuyện cảm động sâu sắc về sự hy sinh vô điều kiện của cha mẹ dành cho con cái.", content: "Trong một gia đình nghèo, người mẹ luôn nhường phần cơm trắng cho con còn mình thì ăn phần cơm cháy và khoai loãng kèm lời nói dối: 'Mẹ không đói, con ăn đi'. Khi con lớn lên đạt thành tích học tập xuất sắc, mẹ làm lụng thâu đêm suốt sáng để kiếm tiền đóng học phí cho con và bảo: 'Mẹ không mệt'. Cho tới những ngày cuối đời trên giường bệnh, người mẹ vẫn mỉm cười bảo con: 'Mẹ không đau'. Những lời nói dối ấy không phải vì mẹ gian dối, mà đó là hiện thân của tình yêu thương vĩ đại, sự hy sinh thầm lặng để nâng bước chân con trưởng thành.", quiz: { question: "Ý nghĩa thực sự đằng sau những lời nói dối của người mẹ là gì?", options: ["Vì mẹ thích ăn khoai hơn ăn cơm", "Vì mẹ muốn che giấu bệnh tật", "Bản chất là tình thương và sự hy sinh vĩ đại dành cho con"], correct: 2 } },
-            { id: 7, tag: "doisong", len: "long", tagName: "Đời Sống", lenName: "Truyện Dài", title: "Vết Nứt Của Chiếc Bình Gốm", summary: "Bài học quý giá về việc chấp nhận khuyết điểm và biến chúng thành vẻ đẹp độc bản.", content: "Một người gánh nước có hai chiếc bình gốm lớn, một chiếc bình hoàn hảo và một chiếc bình có một vết nứt dài. Mỗi lần đi từ suối về nhà, chiếc bình nứt chỉ còn lại một nửa lượng nước. Chiếc bình nứt luôn cảm thấy xấu hổ và đau khổ vì khuyết điểm của mình. Một ngày nọ, nó lên tiếng xin lỗi người gánh nước. Người gánh nước mỉm cười và bảo: 'Hãy nhìn vào vệ đường phía bên con nằm'. Chiếc bình nứt ngạc nhiên thấy dọc đường bên nó có vô số loài hoa khoe sắc rực rỡ, còn bên bình kia thì đất đai khô cằn. Người gánh nước ôn tồn nói: 'Ta biết khuyết điểm của con nên đã gieo hạt hoa ở bên con. Chính nhờ những giọt nước rò rỉ của con mà con đường này mới đẹp đẽ như vậy'. Khuyết điểm của chúng ta đôi khi lại tạo nên những giá trị đặc biệt nếu biết nhìn nhận đúng cách.", quiz: { question: "Người gánh nước đã làm gì để tận dụng vết nứt rò rỉ của chiếc bình?", options: ["Tráng một lớp xi măng để vá lại bình", "Gieo các hạt giống hoa dọc bên vệ đường chiếc bình nứt", "Mua một chiếc bình mới thay thế"], correct: 1 } },
-            { id: 8, tag: "doisong", len: "short", tagName: "Đời Sống", lenName: "Truyện Ngắn", title: "Bài Học Từ Chén Trà Đầy", summary: "Muốn tiếp thu kiến thức mới, trước hết phải học cách lắng nghe và rũ bỏ định kiến cũ.", content: "Một giáo sư triết học nổi tiếng đến tìm vị thiền sư để hỏi về thiền học. Trong suốt buổi trò chuyện, vị giáo sư liên tục thao thao bất tuyệt kể về những hiểu biết, học thức của bản thân mà không chịu lắng nghe thiền sư nói. Vị thiền sư lặng lẽ rót trà vào chén của giáo sư. Trà đã đầy, nhưng thiền sư vẫn tiếp tục rót khiến nước trà tràn ra khắp bàn. Vị giáo sư hoảng hốt kêu lên: 'Trà đầy rồi, đừng rót nữa!'. Lúc này thiền sư mới dừng lại và nói: 'Cũng giống như cái chén này, tâm trí ông đã chứa đầy định kiến và sự tự phụ. Nếu ông không đổ bớt nước trong chén đi, làm sao tôi có thể rót trà vào được nữa?'. Muốn học hỏi, hãy tiếp cận với một tâm thế trống rỗng để tiếp thu.", quiz: { question: "Hành động rót trà tràn ra ngoài của vị thiền sư nhằm ngụ ý điều gì?", options: ["Nhắc nhở giáo sư rằng tâm trí ông đang quá đầy định kiến, không chịu lắng nghe", "Thiền sư bị lơ đãng nên rót trượt", "Trà quá nhiều không dùng hết"], correct: 0 } },
-            
-            // BỘ 4: CỔ TÍCH CHỌN LỌC TRƯỞNG THÀNH TRUYỀN THUYẾT VÀ NGUYÊN TÁC
-            { id: 9, tag: "cotich", len: "long", tagName: "Cổ Tích", lenName: "Truyện Dài", title: "Chuyện Người Con Gái Nam Xương (Nguyễn Dữ)", summary: "Bi kịch oan khuất đau đớn của người phụ nữ dưới chế độ phong kiến bất công.", content: "Vũ Nương là người con gái thùy mị, nết na, tư dung tốt đẹp. Lấy chồng là Trương Sinh - một kẻ đa nghi, ít học, cô luôn giữ gìn khuôn phép. Chồng đi lính, Vũ Nương một mình nuôi con nhỏ, phụng dưỡng mẹ chồng chu đáo lúc ốm đau và lo liệu ma chay chu toàn khi mẹ khuất núi. Để dỗ con, cô thường chỉ cái bóng mình trên vách và bảo đó là cha đứa bé. Khi Trương Sinh trở về, nghe lời ngây ngô của đứa con, gã nổi máu ghen tuông, mắng nhiếc và đuổi Vũ Nương đi. Tuyệt vọng vì danh dự bị chà đạp, Vũ Nương gieo mình xuống sông Hoàng Giang tự tử. Về sau, khi Trương Sinh hiểu ra sự thật về cái bóng thì vợ đã mãi mãi ra đi. Tác phẩm tố cáo xã hội phong kiến phong kiến trọng nam khinh nữ sâu sắc.", quiz: { question: "Nguyên nhân trực tiếp dẫn đến bi kịch oan khuất của Vũ Nương là gì?", options: ["Nàng không chung thủy với chồng", "Lời nói ngây thơ của đứa con kết hợp tính đa nghi của Trương Sinh", "Mẹ chồng đối xử tàn ác"], correct: 1 } },
-            { id: 10, tag: "cotich", len: "long", tagName: "Cổ Tích", lenName: "Truyện Dài", title: "Sự Tích Trầu Cau", summary: "Sự tích cảm động giải thích nguồn gốc tục ăn trầu và biểu tượng gắn kết tình anh em, nghĩa vợ chồng.", content: "Ngày xưa có hai anh em Tân và Lang giống nhau như đúc, yêu thương nhau hết mực. Sau khi Tân lấy vợ, tình cảm anh em dần xa cách do những hiểu lầm không đáng có trong cuộc sống. Đau khổ vì nghĩ em trai phản bội, Lang bỏ nhà ra đi, đến bên một dòng sông rộng thì kiệt sức, hóa thành một tảng đá vôi. Tân hận thối ruột đi tìm em, đến nơi cũng gục khóc bên tảng đá rồi hóa thành cây cau thẳng tắp bên cạnh. Người vợ đi tìm chồng, chứng kiến cảnh tượng đau lòng liền gục xuống chân cây cau rồi hóa thành dây trầu không quấn chặt lấy thân cau. Về sau, vua Hùng đi tuần qua, nghe câu chuyện cảm động liền sai người hái quả cau và lá trầu nhai thử, thấy vị thơm cay, nhổ xuống tảng đá vôi thấy hiện sắc đỏ tươi. Từ đó tục ăn trầu xuất hiện biểu trưng cho sự gắn kết thủy chung.", quiz: { question: "Trong truyện Sự tích Trầu cau, người em trai (Lang) đã hóa thân thành gì?", options: ["Cây cau thẳng tắp", "Dây trầu không quấn quýt", "Tảng đá vôi bên bờ sông"], correct: 2 } }
+            { id: 1, tag: "vanhoc", len: "long", tagName: "Ngữ Văn", lenName: "Truyện Dài", title: "Lặng Lẽ Sa Pa (Nguyễn Thành Long)", summary: "Bức tranh về những con người lao động thầm lặng, cống hiến hết mình cho tổ quốc giữa Sa Pa mù sương.", content: "Truyện ngắn 'Lặng lẽ Sa Pa' xoay quanh nhân vật anh thanh niên 27 tuổi làm công tác khí tượng kiêm vật lý địa cầu trên đỉnh Yên Sơn cao 2600 mét. Công việc hàng ngày của anh là đo gió, đo mưa, đo tính mây, đo chấn động đất rồi báo về trung tâm để phục vụ sản xuất và chiến đấu. Giữa cái lặng lẽ, heo hút của núi rừng Tây Bắc, anh vượt lên hoàn cảnh bằng lòng yêu nghề, lối sống khoa học, tinh thần ham đọc sách và sự cởi mở, chân thành. Cuộc gặp gỡ chớp nhoáng giữa anh với ông họa sĩ già và cô kỹ sư trẻ đã giúp họ cảm nhận sâu sắc hơn về vẻ đẹp của những con người cống hiến thầm lặng không tên tuổi cho đất nước.", quiz: { question: "Nhân vật anh thanh niên trong truyện sống và làm việc trên đỉnh núi nào?", options: ["Đỉnh Fansipan", "Đỉnh Yên Sơn", "Đỉnh Tây Côn Lĩnh"], correct: 1 } },
+            { id: 2, tag: "vanhoc", len: "long", tagName: "Ngữ Văn", lenName: "Truyện Dài", title: "Chiếc Lược Ngà (Nguyễn Quang Sáng)", summary: "Câu chuyện cảm động rơi nước mắt về tình cha con thiêng liêng trong bom đạn kháng chiến chống Mỹ.", content: "Ông Sáu đi kháng chiến khi con gái là bé Thu chưa đầy một tuổi. Sau 8 năm xa cách, ông được về thăm nhà vài ngày nhưng trớ trêu thay, bé Thu không chịu nhận cha vì vết sẹo trên mặt khiến ông không giống người trong bức ảnh chụp chung với mẹ. Đến lúc em hiểu ra và cất tiếng gọi 'Ba' xé lòng thì cũng là lúc ông Sáu phải lên đường trở lại chiến trường. Tại căn cứ, ông dồn hết tình thương yêu vào việc làm một chiếc lược bằng ngà voi để tặng con. Trong một trận càn quét dữ dội của địch, ông Sáu đã hy sinh anh dũng trước khi kịp trao tận tay món quà cho con gái, nhưng tình cha con của ông thì mãi mãi bất diệt.", quiz: { question: "Tại sao ban đầu bé Thu nhất quyết không chịu nhận ông Sáu là cha?", options: ["Vì ông Sáu đi lâu quá em không nhớ mặt", "Vì vết sẹo trên mặt khiến ông khác với bức ảnh", "Vì em nghe lời kẻ xấu xúi giục"], correct: 1 } },
+            { id: 3, tag: "vanhoc", len: "short", tagName: "Ngữ Văn", lenName: "Truyện Ngắn", title: "Làng (Kim Lân)", summary: "Tình yêu làng chợ dầu hòa quyện sâu sắc vào lòng yêu nước thiêng liêng của người nông dân tản cư.", content: "Nhân vật chính của tác phẩm là ông Hai - một người nông dân mang tình yêu làng Chợ Dầu sâu đậm. Phải đi tản cư vì chiến tranh, ông luôn dõi theo tin tức kháng chiến và tự hào về làng mình. Khi nghe tin sét đánh rằng làng Chợ Dầu theo giặc làm việt gian, ông Hai rơi vào tâm trạng đau đớn, tủi nhục, tuyệt vọng và bế tắc tuyệt đối. Thế nhưng, khi đặt lên bàn cân, ông khẳng định: 'Làng thì yêu thật, nhưng làng theo Tây thì phải thù'. Nỗi đau đó chỉ được giải tỏa hoàn toàn khi chủ tịch xã cải chính tin đồn. Dù nhà bị Tây đốt nhẵn, ông Hai vẫn sung sướng đi khoe khắp nơi vì đó là minh chứng làng ông không hề phản bội cách mạng.", quiz: { question: "Câu nói nổi tiếng nào thể hiện rõ nét nhận thức kháng chiến của ông Hai?", options: ["Làng thì yêu thật, nhưng làng theo Tây thì phải thù", "Dù có chết tôi cũng không bao giờ rời bỏ làng Chợ Dầu", "Tây đốt nhà tôi chứng tỏ làng tôi là làng cách mạng"], correct: 0 } }
         ];
 
-        // --- 2. THUẬT TOÁN AUTOMATION ĐỂ GENERATE HÀNG TRĂM TRUYỆN TỰ ĐỘNG KHÔNG LÀM NẶNG FILE ---
         const types = ["vanhoc", "lichsu", "doisong", "cotich"];
         const names = {
-            "vanhoc": ["Truyện Kiều Chuyên Sâu", "Đồng Chí - Chính Hữu", "Bài Thơ Tiểu Đội Xe Không Kính", "Ánh Trăng - Nguyễn Duy", "Mùa Xuân Nho Nhỏ", "Viếng Lăng Bác", "Sang Thu - Hữu Thỉnh", "Nói Với Con - Y Phương"],
-            "lichsu": ["Chiến Thắng Điện Biên Phủ", "Hội Nghị Diên Hồng Kiên Cường", "Lý Thường Kiệt Phá Tống", "Chiến Thắng Bạch Đằng Giang", "Ngô Quyền Phá Quân Nam Hán", "Bình Ngô Đại Cáo Hoàn Cảnh", "Khởi Nghĩa Lam Sơn Hào Hùng"],
-            "doisong": ["Hạt Giống Tâm Hồn: Cho Đi Là Còn Mãi", "Sức Mạnh Của Sự Tử Tế", "Vượt Qua Nghịch Cảnh Học Đường", "Tình Bạn Tuổi Học Trò", "Lòng Biết Ơn Cuộc Sống", "Giá Trị Của Thời Gian Lớp 9", "Thói Quen Thành Công Mỗi Ngày"],
-            "cotich": ["Tấm Cám Nguyên Tác Góc Nhìn Văn Học", "Sự Tích Dưa Hấu Mai An Tiêm", "Bánh Chưng Bánh Giầy Triết Lý", "Thần Trụ Trời Thần Thoại Vũ Trụ", "Sơn Tinh Thủy Tinh Bản Sâu Lớp 9", "Sự Tích Hồ Gươm Trả Gươm Thần"]
+            "vanhoc": ["Truyện Kiều Chuyên Sâu", "Đồng Chí - Chính Hữu", "Bài Thơ Tiểu Đội Xe Không Kính", "Ánh Trăng", "Mùa Xuân Nho Nhỏ", "Viếng Lăng Bác"],
+            "lichsu": ["Chiến Thắng Điện Biên Phủ", "Hội Nghị Diên Hồng Kiên Cường", "Lý Thường Kiệt Phá Tống", "Chiến Thắng Bạch Đằng Giang"],
+            "doisong": ["Hạt Giống Tâm Hồn: Cho Đi Là Còn Mãi", "Sức Mạnh Của Sự Tử Tế", "Vượt Qua Nghịch Cảnh Học Đường", "Tình Bạn Tuổi Học Trò"],
+            "cotich": ["Tấm Cám Nguyên Tác", "Sự Tích Dưa Hấu Mai An Tiêm", "Bánh Chưng Bánh Giầy", "Sự Tích Hồ Gươm"]
         };
-
-        const contents = {
-            "vanhoc": "Tác phẩm chứa đựng những bài học nghệ thuật văn học vô giá của chương trình Ngữ Văn . Giúp học sinh nắm vững luận điểm, phương thức biểu đạt, các biện pháp tu từ độc đáo và nội dung cốt lõi để đạt điểm tối đa trong kỳ thi Tuyển sinh vào lớp 10 sắp tới.",
-            "lichsu": "Trang sử ghi lại chiến công oanh liệt chống ngoại xâm của cha ông ta. Tinh thần yêu nước quật cường, mưu trí dũng cảm đã khẳng định chủ quyền lãnh thổ vững chắc, lưu danh thiên cổ để các thế hệ con cháu đời đời tự hào ghi nhớ.",
-            "doisong": "Câu chuyện thực tế đầy triết lý nhân sinh giúp định hình nhân cách và bản lĩnh cho học sinh cuối cấp. Rèn luyện tư duy tích cực, kỹ năng sống, lòng nhân ái, sự thấu hiểu và sẻ chia trước những thử thách trong cuộc sống hàng ngày.",
-            "cotich": "Vượt ra ngoài tầng nghĩa giải trí thông thường, tác phẩm chứa đựng những bài học ngụ ngôn sâu sắc, phản ánh ước mơ công lý, cái thiện chiến thắng cái ác, giải mã các hiện tượng văn hóa lâu đời của dân tộc dưới góc nhìn tư duy trưởng thành."
-        };
-
-        // Vòng lặp tự động đồng bộ sinh ra thêm 100 câu chuyện chuẩn cấu trúc dữ liệu
-        let currentId = 11;
-        for (let i = 1; i <= 100; i++) {
+        
+        let currentId = 4;
+        for (let i = 1; i <= 30; i++) {
             let t = types[i % types.length];
             let titleList = names[t];
-            let rawTitle = titleList[i % titleList.length] + ` (Phần ${Math.floor(i/titleList.length) + 1})`;
-            let isLong = i % 2 === 0;
-
             STORIES.push({
-                id: currentId,
-                tag: t,
-                len: isLong ? "long" : "short",
-                tagName: t === "vanhoc" ? "Ngữ Văn Lớp 9" : (t === "lichsu" ? "Lịch Sử" : (t === "doisong" ? "Đời Sống" : "Cổ Tích")),
-                lenName: isLong ? "Truyện Dài" : "Truyện Ngắn",
-                title: rawTitle,
-                summary: `Tác phẩm nghiên cứu, rèn luyện tư duy số ${i} cực hay thuộc chủ đề ${t}.`,
-                content: `Nội dung chi tiết bài học thứ ${i}: ` + contents[t] + " Học sinh cần tập trung đọc kỹ, phân tích các chi tiết đắt giá, liên hệ bản thân để rút ra thông điệp cốt lõi của tác giả gửi gắm.",
-                quiz: {
-                    question: `Thông điệp hoặc kiến thức cốt lõi rút ra từ bài học thứ ${i} này là gì?`,
-                    options: ["Nỗ lực học tập, rèn luyện bản lĩnh và tư duy", "Bỏ qua các lỗi nhỏ, không cần để ý", "Tìm kiếm sự giúp đỡ từ bên ngoài"],
-                    correct: 0
-                }
+                id: currentId, tag: t, len: (i % 2 === 0) ? "long" : "short",
+                tagName: t === "vanhoc" ? "Ngữ Văn" : (t === "lichsu" ? "Lịch Sử" : (t === "doisong" ? "Đời Sống" : "Cổ Tích")),
+                lenName: (i % 2 === 0) ? "Truyện Dài" : "Truyện Ngắn",
+                title: titleList[i % titleList.length] + ` (Bài Số #${currentId})`,
+                summary: `Tìm hiểu nội dung kiến thức chuyên sâu mở rộng bổ ích.`,
+                content: `Chào mừng các em học sinh đến với hệ thống bài đọc hiểu chuyên sâu số #${currentId}. Tìm hiểu phong cách sáng tác độc đáo của các nhà văn hiện đại, sự kết hợp nhuần nhuyễn giữa chất trữ tình và chất hiện thực đời sống chiến đấu gian khổ của quân dân ta. Hãy ghi nhớ kỹ luận điểm cốt lõi này.\n\nMở rộng kiến thức nâng cao tại phần 2: Tìm hiểu phong cách sáng tác độc đáo của các nhà văn hiện đại, sự kết hợp nhuần nhuyễn giữa chất trữ tình và chất hiện thực đời sống chiến đấu gian khổ của quân dân ta. Từ đó xây dựng sơ đồ tư duy liên hệ thực tiễn một cách logic.\n\nĐúc kết và tổng hợp lại toàn bộ bài học: Tìm hiểu phong cách sáng tác độc đáo của các nhà văn hiện đại, sự kết hợp nhuần nhuyễn giữa chất trữ tình và chất hiện thực đời sống chiến đấu gian khổ của quân dân ta. Chúc các em vận dụng linh hoạt để đạt điểm tối đa trong các bài kiểm tra.`,
+                quiz: { question: "Phương pháp học tốt nhất tác phẩm này là gì?", options: ["Nắm vững sơ đồ tư duy và luận điểm cốt lõi", "Học thuộc lòng không cần hiểu", "Bỏ qua các bài mở rộng"], correct: 0 }
             });
             currentId++;
         }
 
-        // --- 3. QUẢN LÝ TRẠNG THÁI VÀ HỆ THỐNG ---
+        // --- TRẠNG THÁI ---
         let currentUser = null;
         let activeStory = null;
         let currentFilter = 'all';
 
+        function getLocalUsers() { return JSON.parse(localStorage.getItem('backup_users_l9')) || []; }
+        function saveLocalUsers(arr) { localStorage.setItem('backup_users_l9', JSON.stringify(arr)); }
+
         window.onload = function() {
-            currentUser = JSON.parse(localStorage.getItem('user_l9_data')) || null;
-            if (currentUser) { showMainScreen(); } else { switchScreen('screen-login'); }
-            renderStories();
+            let saved = localStorage.getItem('current_user_l9');
+            if(saved) {
+                currentUser = JSON.parse(saved);
+                showMainScreen();
+            }
         };
 
         function switchScreen(screenId) {
@@ -420,11 +230,8 @@
             document.getElementById('tab-stories').style.display = tabName === 'stories' ? 'block' : 'none';
             document.getElementById('tab-game').style.display = tabName === 'game' ? 'block' : 'none';
             document.getElementById('tab-leaderboard').style.display = tabName === 'leaderboard' ? 'block' : 'none';
-            
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-tab-' + tabName).classList.add('active');
-            
-            if(tabName === 'leaderboard') renderLeaderboard();
         }
 
         function setFilter(filterType) {
@@ -434,31 +241,20 @@
             renderStories();
         }
 
-        // --- 4. HÀM ĐĂNG KÝ VÀ ĐĂNG NHẬP (KHÔNG LỖI LOGIC) ---
         function handleRegister() {
             const name = document.getElementById('reg-name').value.trim();
             const username = document.getElementById('reg-username').value.trim().toLowerCase();
             const password = document.getElementById('reg-password').value;
+            if(!name || !username || !password) { alert("Hãy điền đủ thông tin em nhé!"); return; }
 
-            if(!name || !username || !password) {
-                alert("Hãy nhập đầy đủ thông tin em nhé!");
-                return;
-            }
-
-            let localUsers = JSON.parse(localStorage.getItem('all_users_l9')) || [];
-            if(localUsers.some(u => u.username === username)) {
-                alert("Tên đăng nhập này đã có người dùng!");
-                return;
-            }
-
-            const newUser = {
-                username: username, password: password, name: name,
-                points: 30, level: 1, readStories: []
-            };
-            
+            const newUser = { username, password, name, points: 30, level: 1, readStories: [0] };
+            let localUsers = getLocalUsers();
+            if(localUsers.some(u => u.username === username)) { alert("Tên đăng nhập này đã tồn tại!"); return; }
             localUsers.push(newUser);
-            localStorage.setItem('all_users_l9', JSON.stringify(localUsers));
-            alert("Đăng ký thành công! Quay lại đăng nhập nhé.");
+            saveLocalUsers(localUsers);
+
+            try { firebase.database().ref('users/' + username).set(newUser); } catch(e){}
+            alert("Đăng ký thành công!");
             switchScreen('screen-login');
             document.getElementById('login-username').value = username;
         }
@@ -466,189 +262,178 @@
         function handleLogin() {
             const username = document.getElementById('login-username').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value;
-            
-            let localUsers = JSON.parse(localStorage.getItem('all_users_l9')) || [];
-            const user = localUsers.find(u => u.username === username && u.password === password);
+            if(!username || !password) { alert("Vui lòng điền đủ thông tin!"); return; }
 
-            if(user) {
-                currentUser = user;
-                localStorage.setItem('user_l9_data', JSON.stringify(currentUser));
-                showMainScreen();
-            } else {
-                alert("Sai tài khoản hoặc mật khẩu!");
-            }
+            try {
+                firebase.database().ref('users/' + username).once('value').then((snapshot) => {
+                    if(snapshot.exists() && snapshot.val().password === password) {
+                        loginSuccess(snapshot.val());
+                    } else { checkLocalLogin(username, password); }
+                }).catch(() => { checkLocalLogin(username, password); });
+            } catch(e) { checkLocalLogin(username, password); }
         }
 
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('user_l9_data');
-            switchScreen('screen-login');
+        function checkLocalLogin(username, password) {
+            let localUsers = getLocalUsers();
+            let matched = localUsers.find(u => u.username === username && u.password === password);
+            if(matched) { loginSuccess(matched); } else { alert("Sai tên đăng nhập hoặc mật khẩu!"); }
+        }
+
+        function loginSuccess(userObj) {
+            currentUser = userObj;
+            localStorage.setItem('current_user_l9', JSON.stringify(currentUser));
+            showMainScreen();
         }
 
         function showMainScreen() {
-            updateHeader();
             switchScreen('screen-main');
-            showTab('stories');
+            updateHeaderUI();
             renderStories();
+            syncLeaderboard(); // Tự động kích hoạt lắng nghe real-time từ bạn bè
         }
 
-        function getTitle(points) {
-            let lvl = Math.floor(points / 30) + 1;
-            if(lvl >= 15) return "👑 Trạng Nguyên Đất Việt";
-            if(lvl >= 10) return "🎓 Viện Sĩ Hàn Lâm";
-            if(lvl >= 6) return "📚 Học Giả Thông Thái";
-            if(lvl >= 3) return "✏️ Tú Tài Khá Giả";
-            return "🌱 Sĩ Tử Cần Mẫn";
+        function updateHeaderUI() {
+            if(!currentUser) return;
+            let titleName = "Tân Binh";
+            if(currentUser.points >= 150) titleName = "Trạng Nguyên";
+            else if(currentUser.points >= 100) titleName = "Bảng Nhãn";
+            else if(currentUser.points >= 50) titleName = "Thám Hoa";
+
+            let countRead = currentUser.readStories ? currentUser.readStories.filter(id => id !== 0).length : 0;
+            document.getElementById('header-user-info').innerHTML = `
+                <span>Học sinh: <strong>${currentUser.name}</strong></span>
+                <span class="lvl-badge">Cấp ${currentUser.level}</span>
+                <span class="title-badge">${titleName}</span>
+                <span>Đã đọc: <strong>${countRead} bài</strong></span>
+                <span>Điểm: <strong style="color:#e67e22;">${currentUser.points}đ</strong></span>
+                <button class="btn btn-danger" style="padding:4px 10px; font-size:12px;" onclick="handleLogout()">Thoát</button>
+            `;
         }
 
-        function updateHeader() {
-            const info = document.getElementById('header-user-info');
-            if (currentUser) {
-                let lvl = Math.floor(currentUser.points / 30) + 1;
-                info.innerHTML = `
-                    <span>Học sinh: <strong>${currentUser.name}</strong></span>
-                    <span class="lvl-badge">Cấp ${lvl}</span>
-                    <span class="title-badge">${getTitle(currentUser.points)}</span>
-                    <span>Điểm: <strong style="color:#d35400">${currentUser.points}đ</strong></span>
-                    <button class="btn btn-danger" onclick="handleLogout()">Đăng xuất</button>
-                `;
+        function handleLogout() {
+            localStorage.removeItem('current_user_l9');
+            currentUser = null;
+            switchScreen('screen-login');
+        }
+
+        function saveUserData() {
+            localStorage.setItem('current_user_l9', JSON.stringify(currentUser));
+            let arr = getLocalUsers();
+            let idx = arr.findIndex(u => u.username === currentUser.username);
+            if(idx !== -1) arr[idx] = currentUser; else arr.push(currentUser);
+            saveLocalUsers(arr);
+            try { firebase.database().ref('users/' + currentUser.username).set(currentUser); } catch(e){}
+            updateHeaderUI();
+        }
+
+        function renderStories() {
+            const container = document.getElementById('story-list');
+            container.innerHTML = "";
+            let list = STORIES;
+            if (currentFilter !== 'all') {
+                if (['vanhoc','lichsu','doisong','cotich'].includes(currentFilter)) list = STORIES.filter(s => s.tag === currentFilter);
+                else list = STORIES.filter(s => s.len === currentFilter);
+            }
+            list.forEach(story => {
+                let isRead = currentUser.readStories && currentUser.readStories.includes(story.id);
+                const card = document.createElement('div');
+                card.className = "story-card";
+                card.innerHTML = `
+                    <div>
+                        <div class="badges-wrapper"><span class="badge tag-${story.tag}">${story.tagName}</span><span class="badge tag-length">${story.lenName}</span></div>
+                        <h3>${story.title}</h3><p style="font-size:13px; color:#666;">${story.summary}</p>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        ${isRead ? `<span style="color:#2ecc71; font-weight:bold; font-size:12px;">✓ Đã xong</span>` : ""}
+                        <button class="btn" style="padding:6px 14px; font-size:13px;" onclick="readStory(${story.id})">Nghiên Cứu Ngay</button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function readStory(id) {
+            activeStory = STORIES.find(s => s.id === id);
+            if(!activeStory) return;
+            switchScreen('screen-read');
+            document.getElementById('read-title').innerText = activeStory.title;
+            
+            // Xử lý xuống dòng mượt mà cho nội dung truyện
+            document.getElementById('read-content').innerHTML = activeStory.content.replace(/\n/g, '<br>');
+            
+            let isRead = currentUser.readStories && currentUser.readStories.includes(activeStory.id);
+            const quizArea = document.getElementById('quiz-area');
+            if(isRead) {
+                quizArea.innerHTML = `<h3>🎉 Em đã hoàn thành tốt nội dung bài học này!</h3>`;
+            } else {
+                quizArea.innerHTML = `<h3 style="color:#c0392b; margin-bottom: 10px;">🧠 TRÒ CHƠI ĐỐ VUI</h3><p style="font-weight:bold; margin-bottom: 10px;">${activeStory.quiz.question}</p><div id="quiz-options-container"></div>`;
+                activeStory.quiz.options.forEach((opt, idx) => {
+                    const btn = document.createElement('div'); btn.className = "quiz-option"; btn.innerText = opt;
+                    btn.onclick = function() {
+                        if(idx === activeStory.quiz.correct) {
+                            confetti({ particleCount: 80, spread: 60 });
+                            currentUser.points += 10;
+                            if(!currentUser.readStories) currentUser.readStories = [0];
+                            currentUser.readStories.push(activeStory.id);
+                            currentUser.level = Math.floor(currentUser.points / 50) + 1;
+                            saveUserData();
+                            alert("Chính xác! Bạn được cộng +10 điểm.");
+                            readStory(activeStory.id);
+                        } else { alert("Chưa chính xác rồi, hãy suy nghĩ lại nhé!"); }
+                    };
+                    document.getElementById('quiz-options-container').appendChild(btn);
+                });
             }
         }
 
-        // --- 5. GAME VÒNG QUAY MAY MẮN ---
-        let isSpinning = false;
+        function backToMain() { activeStory = null; showMainScreen(); }
+
+        let spinning = false;
         function spinWheel() {
-            if(isSpinning) return;
-            if(currentUser.points < 15) {
-                alert("Em không đủ điểm! Hãy đi đọc thêm bài học để tích điểm nha.");
-                return;
-            }
-
+            if(spinning) return;
+            if(currentUser.points < 15) { alert("Không đủ 15 điểm!"); return; }
+            spinning = true;
             currentUser.points -= 15;
-            isSpinning = true;
-            
-            const gifts = [
-                { text: "Cộng 5 điểm", value: 5 },
-                { text: "Mất trắng", value: 0 },
-                { text: "Cộng 40 điểm", value: 40 },
-                { text: "Cộng 15 điểm", value: 15 }
-            ];
-            
-            const randomIndex = Math.floor(Math.random() * gifts.length);
-            const degree = 3600 + (randomIndex * 90) + 45;
-            
-            const wheel = document.getElementById('wheel');
-            wheel.style.transform = `rotate(${degree}deg)`;
-            
+            updateHeaderUI();
+            let gifts = [{n:"Mất lượt rồi 😢", b:0, d:45},{n:"+5 Điểm 🌟", b:5, d:135},{n:"+20 Điểm 🚀", b:20, d:225},{n:"+50 Điểm 🎁", b:50, d:315}];
+            let lucky = gifts[Math.floor(Math.random()*gifts.length)];
+            document.getElementById('wheel').style.transform = `rotate(${3600 + lucky.d}deg)`;
             setTimeout(() => {
-                const prize = gifts[randomIndex];
-                currentUser.points += prize.value;
-                saveData();
-                updateHeader();
-                
-                if(prize.value > 15) {
-                    confetti({ particleCount: 100, spread: 60 });
-                    alert(`🎉 Tuyệt vời! Em đã quay trúng: ${prize.text}!`);
-                } else {
-                    alert(`Kết quả vòng quay: ${prize.text}`);
-                }
-                
-                isSpinning = false;
-                wheel.style.transform = 'rotate(0deg)';
+                spinning = false;
+                currentUser.points += lucky.b;
+                currentUser.level = Math.floor(currentUser.points / 50) + 1;
+                saveUserData();
+                alert("Kết quả: " + lucky.n);
             }, 4000);
         }
 
-        // --- 6. RENDER HIỂN THỊ SIÊU KHO TRUYỆN ---
-        function renderStories() {
-            const grid = document.getElementById('story-list');
-            if(!grid) return;
-
-            const filtered = STORIES.filter(s => {
-                if(currentFilter === 'all') return true;
-                if(currentFilter === 'short' || currentFilter === 'long') return s.len === currentFilter;
-                return s.tag === currentFilter;
-            });
-
-            grid.innerHTML = filtered.map(s => `
-                <div class="story-card">
-                    <div>
-                        <div class="badges-wrapper">
-                            <span class="badge tag-${s.tag}">${s.tagName}</span>
-                            <span class="badge tag-length">${s.lenName}</span>
-                        </div>
-                        <h3>${s.title}</h3>
-                        <p style="font-size:13.5px; color:#555; text-align:justify; line-height:1.5;">${s.summary}</p>
-                    </div>
-                    <button class="btn" style="margin-top:15px;" onclick="openStory(${s.id})">Nghiên Cứu Ngay</button>
-                </div>
-            `).join('');
-        }
-
-        function openStory(id) {
-            activeStory = STORIES.find(s => s.id === id);
-            document.getElementById('read-title').innerText = activeStory.title;
-            document.getElementById('read-content').innerHTML = activeStory.content;
-            
-            const quizArea = document.getElementById('quiz-area');
-            if(currentUser.readStories.includes(id)) {
-                quizArea.innerHTML = `<h3 style="color:#27ae60; text-align:center;">✓ Em đã đọc hiểu văn bản này và hoàn thành câu hỏi thử thách!</h3>`;
-            } else {
-                document.getElementById('quiz-question-text').innerText = activeStory.quiz.question;
-                document.getElementById('quiz-options-container').innerHTML = activeStory.quiz.options.map((opt, idx) => `
-                    <div class="quiz-option" onclick="checkQuizAnswer(${idx})">${idx + 1}. ${opt}</div>
-                `).join('');
-            }
-            switchScreen('screen-read');
-        }
-
-        function checkQuizAnswer(selectedIdx) {
-            if(selectedIdx === activeStory.quiz.correct) {
-                currentUser.points += 20;
-                currentUser.readStories.push(activeStory.id);
-                saveData();
-                
-                confetti({ particleCount: 130, spread: 70 });
-                alert("🎯 Quá xuất sắc! Em đã chọn đáp án chính xác và nhận +20 Điểm thưởng thi đua!");
-                backToMain();
-            } else {
-                alert("❌ Câu trả lời chưa đúng, em hãy suy nghĩ logic và chọn lại nhé!");
-            }
-        }
-
-        function backToMain() { switchScreen('screen-main'); updateHeader(); }
-
-        function saveData() {
-            let localUsers = JSON.parse(localStorage.getItem('all_users_l9')) || [];
-            localUsers = localUsers.map(u => u.username === currentUser.username ? currentUser : u);
-            localStorage.setItem('all_users_l9', JSON.stringify(localUsers));
-            localStorage.setItem('user_l9_data', JSON.stringify(currentUser));
-        }
-
-        // --- 7. BẢNG XẾP HẠNG THI ĐUA ---
-        function renderLeaderboard() {
+        // --- BẢNG XẾP HẠNG (ĐỒNG BỘ TRỰC TIẾP LIVE 24/7) ---
+        function syncLeaderboard() {
             const tbody = document.getElementById('leaderboard-body');
-            let localUsers = JSON.parse(localStorage.getItem('all_users_l9')) || [];
-            const sorted = [...localUsers].sort((a,b) => b.points - a.points);
+            let showList = function(arr) {
+                arr.sort((a,b) => b.points - a.points);
+                tbody.innerHTML = "";
+                arr.forEach((u, i) => {
+                    let tr = document.createElement('tr');
+                    if(i===0) tr.className="rank-1"; else if(i===1) tr.className="rank-2"; else if(i===2) tr.className="rank-3";
+                    let count = u.readStories ? u.readStories.filter(id=>id!==0).length : 0;
+                    let titleName = "Học Viên";
+                    if(u.points >= 150) titleName = "👑 Trạng Nguyên";
+                    else if(u.points >= 100) titleName = "Bảng Nhãn";
+                    else if(u.points >= 50) titleName = "Thám Hoa";
 
-            if(sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Chưa có dữ liệu thi đua học sinh.</td></tr>`;
-                return;
-            }
+                    tr.innerHTML = `<td>#${i+1}</td><td><strong>${u.name}</strong> (@${u.username})</td><td>Cấp ${u.level || 1}</td><td><span class="title-badge">${titleName}</span></td><td>${count} bài</td><td><strong style="color:#e67e22;">${u.points}đ</strong></td>`;
+                    tbody.appendChild(tr);
+                });
+            };
 
-            tbody.innerHTML = sorted.map((u, i) => {
-                let rank = i + 1;
-                let rClass = rank===1?'rank-1':(rank===2?'rank-2':(rank===3?'rank-3':''));
-                return `
-                    <tr class="${rClass}">
-                        <td><strong>Hạng ${rank}</strong></td>
-                        <td><strong>${u.name}</strong></td>
-                        <td><span class="lvl-badge">Cấp ${Math.floor(u.points / 30) + 1}</span></td>
-                        <td><span class="title-badge">${getTitle(u.points)}</span></td>
-                        <td>${u.readStories ? u.readStories.length : 0} bài</td>
-                        <td><strong style="color:#d35400;">${u.points}đ</strong></td>
-                    </tr>
-                `;
-            }).join('');
+            try {
+                // Sử dụng .on('value') để liên tục cập nhật khi có bạn bè cộng điểm
+                firebase.database().ref('users').on('value', function(snap) {
+                    if(snap.exists()) {
+                        showList(Object.values(snap.val()));
+                    } else { showList(getLocalUsers()); }
+                }, function() { showList(getLocalUsers()); });
+            } catch(e) { showList(getLocalUsers()); }
         }
     </script>
 </body>
